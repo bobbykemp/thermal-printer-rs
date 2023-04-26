@@ -2,8 +2,18 @@ use super::epson_printer_constants::printer_hardware::BEEP;
 use std::error::Error;
 use std::fmt;
 
+use image::codecs::png::PngDecoder;
+use image::GenericImageView;
+
 pub struct EpsonPrinter {
     buffer: Vec<u8>,
+}
+
+struct Color {
+    r: u8,
+    g: u8,
+    b: u8,
+    a: u8,
 }
 
 #[derive(Debug)]
@@ -71,6 +81,17 @@ impl EpsonPrinter {
         self.buffer.extend([0x1D, 0x21]);
         self.buffer.extend([concatened_width_height]);
         Ok(self.buffer.clone())
+    }
+
+    fn print_image_buffer(&mut self, file_path: &str) -> Result<Vec<u8>, EpsonPrinterError> {
+        self.clear_buffer();
+
+        let image = image::open(file_path).unwrap();
+
+        let rgba_data = image.into_rgba8();
+        let (image_width, image_height) = image.dimensions();
+
+        return Ok(vec![]);
     }
 }
 
